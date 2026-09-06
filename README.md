@@ -50,6 +50,8 @@ The expected breach rates are 5% and 1%. All ten model/confidence combinations w
 
 These figures come from 5,029 backtesting observations and match the submitted dissertation. Complete numeric and formatted tables are available in [`results/`](results/).
 
+The rolling exceedance charts begin after the first 252-day warm-up window; the initial missing values are expected because no complete rolling window exists before that date.
+
 ## Project structure
 
 ```text
