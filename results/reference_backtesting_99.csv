@@ -1,0 +1,6 @@
+Model,Exceedances,Expected exceedances,Exceedance rate,Coverage error,Average VaR,Kupiec p-value,Kupiec decision,Independence p-value,Independence decision,Conditional coverage p-value,Conditional coverage decision
+Historical VaR,86,50.29,1.71%,0.71%,3.22%,<0.001,Reject,0.0039,Reject,<0.001,Reject
+Student-t VaR,94,50.29,1.87%,0.87%,3.24%,<0.001,Reject,0.0403,Reject,<0.001,Reject
+"GARCH(1,1)-Student-t VaR",96,50.29,1.91%,0.91%,2.76%,<0.001,Reject,0.4196,Do not reject,<0.001,Reject
+"GARCH(1,1)-Normal VaR",120,50.29,2.39%,1.39%,2.55%,<0.001,Reject,0.9349,Do not reject,<0.001,Reject
+Normal VaR,136,50.29,2.70%,1.70%,2.76%,<0.001,Reject,0.0013,Reject,<0.001,Reject

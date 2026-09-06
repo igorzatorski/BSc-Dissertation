@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "global-equity-var-backtesting"
+version = "1.0.0"
+description = "Historical, parametric and GARCH Value-at-Risk backtesting for a global equity ETF portfolio"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{name = "Igor Zatorski"}]
+license = "MIT"
+dependencies = [
+    "numpy>=1.26,<3", "pandas>=2.2,<3", "scipy>=1.12,<2",
+    "matplotlib>=3.8,<4", "arch>=7,<9", "yfinance>=0.2.54,<2"
+]
+
+[project.urls]
+Repository = "https://github.com/igorzatorski/Dissertation"
+Dissertation = "https://github.com/igorzatorski/Dissertation/blob/main/docs/dissertation/Igor_Zatorski_Dissertation.pdf"
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "black>=25,<27", "ruff>=0.12,<1"]
+
+[project.scripts]
+var-backtest = "var_backtesting.pipeline:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"

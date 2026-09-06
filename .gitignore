@@ -1,0 +1,13 @@
+.venv/
+.local-backup/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+outputs/
+data/
+.refactor-work/
+.clean-venv/
