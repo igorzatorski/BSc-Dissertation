@@ -1,6 +1,6 @@
 # Global Equity ETF VaR Backtesting
 
-[![Tests](https://github.com/igorzatorski/Dissertation/actions/workflows/tests.yml/badge.svg)](https://github.com/igorzatorski/Dissertation/actions/workflows/tests.yml)
+[![Tests](https://github.com/igorzatorski/BSc-Dissertation/actions/workflows/tests.yml/badge.svg)](https://github.com/igorzatorski/BSc-Dissertation/actions/workflows/tests.yml)
 
 An empirical comparison of Historical, parametric and GARCH-based Value-at-Risk models for a global equity ETF portfolio.
 

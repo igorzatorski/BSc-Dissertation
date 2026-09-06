@@ -16,8 +16,8 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/igorzatorski/Dissertation"
-Dissertation = "https://github.com/igorzatorski/Dissertation/blob/main/docs/dissertation/Igor_Zatorski_Dissertation.pdf"
+Repository = "https://github.com/igorzatorski/BSc-Dissertation"
+Dissertation = "https://github.com/igorzatorski/BSc-Dissertation/blob/main/docs/dissertation/Igor_Zatorski_Dissertation.pdf"
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9", "black>=25,<27", "ruff>=0.12,<1"]
