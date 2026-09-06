@@ -7,7 +7,7 @@ Validation was performed locally on 6 September 2026. The original notebook was 
 - `python -m pytest -q`: **18 tests passed**. All five models at 95% and 99% and all backtesting summary fields matched the original functions exactly on a deterministic 272-price-row fixture (252-return calibration window, 18 forecast observations).
 - Each of the ten model/confidence cases checks that changing the realised return at the final forecast date does not change that day's threshold.
 - Original portfolio alignment, zero/all-breach likelihood handling, incomplete ETF input and output overwrite protection were tested.
-- An AST comparison confirmed that **18 original non-plotting functions** retained identical executable structure after excluding added docstrings and type annotations.
+- At the initial refactor, an AST comparison confirmed that **18 original non-plotting functions** retained identical executable structure after excluding added docstrings and type annotations.
 - A real-data end-to-end smoke run completed for all ten combinations on prices from December 2024 through December 2025, producing ten forecast CSVs, numeric and formatted tables, ten PNG figures and a completion manifest. Its 17 forecast observations validate execution only; they are not a meaningful statistical sample.
 - The full Yahoo Finance input download returned **5,283 rows and ten ETFs**, from 3 January 2005 to 31 December 2025.
 - Independent known-value tests verify the Historical VaR quantile, closed-form Normal VaR forecast and Kupiec likelihood-ratio statistic.
@@ -36,6 +36,12 @@ The full-sample research run used Python 3.13 on Windows; its manifest records a
 
 ## Reproduction boundaries
 
-Regression parity establishes that the refactor preserves the supplied notebook's calculations on identical inputs and versions. It does not independently validate every modelling assumption or establish byte-for-byte reproduction of the submitted results on newly downloaded data. Original GARCH optimiser handling, return alignment and statistical formulas are intentionally preserved.
+Regression parity establishes that the refactor preserves the supplied notebook's calculations on identical inputs and versions. It does not independently validate every modelling assumption or establish byte-for-byte reproduction of the submitted results on newly downloaded data. GARCH fitting parameters, return alignment and statistical formulas are preserved. Subsequent hardening adds convergence diagnostics without altering forecasts.
 
-Local data and generated validation outputs are ignored by Git. Reference backtesting tables are included in `results/`. The original `figures/` directory and the privacy-redacted PDF remain the published-study artifacts; the full original price snapshot was not provided.
+Local data and generated validation outputs are ignored by Git. Reference backtesting tables are included in `results/`. The `figures/` directory contains exports from the validated full run, while the privacy-redacted PDF retains the submitted study; the full original price snapshot was not provided.
+
+## Publication hardening
+
+Short runs now skip rolling charts when fewer than 253 forecasts are available. Earlier 17-observation smoke runs produced empty rolling charts; their other eight charts and numerical outputs remain useful execution checks. Each new run exports `convergence_diagnostics.csv` (header-only when no GARCH fit failed to converge), and its manifest records `garch_nonconverged_fits`. Older full-run outputs predate these diagnostics and do not establish convergence of every fit.
+
+The hardening checks passed: **26 tests**, Ruff and Black. A fresh offline smoke run using the saved December 2024–December 2025 prices completed all ten model/confidence combinations with 17 forecasts each. It produced eight non-rolling charts, skipped both rolling charts with explicit warnings, and recorded zero non-converged fits. The full-sample estimation was not repeated for this change; exact numerical regression against the original functions still passes.

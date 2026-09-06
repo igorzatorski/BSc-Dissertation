@@ -36,6 +36,7 @@ def run_analysis(prices, output_dir, window=config.window, models=None, plots=Tr
     portfolio.to_csv(output_dir / "portfolio.csv", index_label="Date")
     config.etf_info.to_csv(output_dir / "etf_universe.csv", index=False)
     results = {}
+    convergence_issues = []
     started = time.perf_counter()
     for name in model_names:
         for level in config.confidence_levels:
@@ -51,10 +52,18 @@ def run_analysis(prices, output_dir, window=config.window, models=None, plots=Tr
                 raise RuntimeError(
                     f"Incomplete/nonfinite forecasts for {name} at {level}."
                 )
+            for issue in result.attrs.get("convergence_issues", []):
+                convergence_issues.append(
+                    {"model": name, "confidence_level": level, **issue}
+                )
             results[name, level] = result
             result.to_csv(
                 output_dir / "forecasts" / f"{name}_{level:.0%}.csv", index_label="Date"
             )
+    pd.DataFrame(
+        convergence_issues,
+        columns=["model", "confidence_level", "date", "status", "message"],
+    ).to_csv(output_dir / "convergence_diagnostics.csv", index=False)
     backtests = pd.concat(
         [summarise_all_backtests(r) for r in results.values()], ignore_index=True
     )
@@ -66,6 +75,7 @@ def run_analysis(prices, output_dir, window=config.window, models=None, plots=Tr
     if plots:
         save_figures(portfolio, backtests, results, output_dir / "figures")
     manifest = {
+        "garch_nonconverged_fits": len(convergence_issues),
         "completed_at_utc": datetime.now(UTC).isoformat(),
         "python": platform.python_version(),
         "packages": {

@@ -32,6 +32,8 @@ Boundary likelihood handling and `1 - chi2.cdf` p-values remain exactly as in th
 
 ## What changed
 
-Code moved into importable modules; notebook execution order became an explicit pipeline. Numeric and display tables are exported separately. Figures retain the local notebook's specifications but are saved to a run directory and closed instead of displayed. The original PDF appendix uses some different plot filenames and axis limits; this refactor follows the supplied local notebook's plots. Original figures remain unchanged. The public PDF copy removes the student number from its first two pages; its research content is unchanged.
+Code moved into importable modules; notebook execution order became an explicit pipeline. Numeric and display tables are exported separately. Figures retain the local notebook's specifications but are saved to a run directory and closed instead of displayed. The original PDF appendix uses some different plot filenames and axis limits; this refactor follows the supplied local notebook's plots. The published `figures/` files were refreshed from the validated full-sample run; the dissertation PDF retains its submitted figures. The public PDF copy removes the student number from its first two pages; its research content is unchanged.
+
+GARCH non-convergence is now reported through warnings and a diagnostics CSV without changing fitted parameters or replacing forecasts. Earlier runs did not record these diagnostics, so their convergence status cannot be inferred retrospectively.
 
 The local notebook backups are excluded from Git. `tests/fixtures/original_functions.py` is a frozen numerical reference, not a second runnable analysis. It permits later checks against the pre-refactor behaviour without distributing the old notebooks.

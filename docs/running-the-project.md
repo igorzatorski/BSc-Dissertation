@@ -38,6 +38,7 @@ Each run creates a separate directory in `outputs/`:
 - `backtesting_results.csv`: full numeric results;
 - `figures/`: PNG charts;
 - `forecasts/`: daily forecasts and exceedances;
+- `convergence_diagnostics.csv`: dates, model names and optimiser messages for non-converged GARCH fits; header-only when none were reported;
 - `manifest.json`: settings and dependency versions, written after successful completion.
 
 Charts are saved instead of displayed in pop-up windows. CSV files can be opened in Excel. Percentages in formatted tables are presentation strings; the full numeric table stores decimal values.
@@ -63,3 +64,5 @@ Run the tests with:
 ```
 
 Original notebook backups are stored locally in `.local-backup/`, which Git ignores. The dissertation PDF is in `docs/dissertation/`. Running the analysis does not create a Git commit or push changes to GitHub.
+
+Rolling exceedance charts require at least 253 forecast observations and use a fixed 252-day diagnostic window. Short runs skip these two charts with a warning. If GARCH emits a convergence warning, inspect `convergence_diagnostics.csv`; affected forecasts are retained for comparison with the dissertation, not certified as reliable fits.

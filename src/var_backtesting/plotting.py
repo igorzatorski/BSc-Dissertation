@@ -1,5 +1,7 @@
 """Original dissertation figures, saved without blocking GUI windows."""
 
+import warnings
+
 import matplotlib
 
 matplotlib.use("Agg")
@@ -141,6 +143,15 @@ def plot_exceedance_rate_99(backtesting_results, figure_dir):
 def plot_rolling_95(hist_95, garch_t_95, figure_dir):
     # 39: Rolling 252-day exceedances for Historical VaR and GARCH-t VaR
 
+    if min(len(hist_95), len(garch_t_95)) < 253:
+        warnings.warn(
+            "Skipping 95% rolling exceedance chart: need at least 253 forecasts "
+            "for two complete 252-day windows.",
+            UserWarning,
+            stacklevel=2,
+        )
+        return
+
     rolling_window = 252
     expected_exceedances_95 = rolling_window * 0.05
 
@@ -194,6 +205,15 @@ def plot_rolling_95(hist_95, garch_t_95, figure_dir):
 
 def plot_rolling_99(hist_99, garch_t_99, figure_dir):
     # 40: Rolling 252-day exceedances for Historical VaR and GARCH-t VaR at 99%
+
+    if min(len(hist_99), len(garch_t_99)) < 253:
+        warnings.warn(
+            "Skipping 99% rolling exceedance chart: need at least 253 forecasts "
+            "for two complete 252-day windows.",
+            UserWarning,
+            stacklevel=2,
+        )
+        return
 
     rolling_window = 252
     expected_exceedances_99 = rolling_window * 0.01

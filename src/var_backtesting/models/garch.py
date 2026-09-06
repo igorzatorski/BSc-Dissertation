@@ -1,5 +1,7 @@
 """Garch one-day VaR forecasts using past returns only."""
 
+import warnings
+
 import numpy as np
 import pandas as pd
 from arch.univariate import arch_model
@@ -16,6 +18,8 @@ def garch_normal_var(portfolio, window, confidence_level):
     # Prepare empty Series for VaR threshold
     var_threshold = pd.Series(index=portfolio.index, dtype=float)
 
+    convergence_issues = []
+
     # Rolling GARCH estimation
     for i in range(window, len(portfolio)):
         # Use only past returns to avoid look-ahead bias
@@ -30,6 +34,15 @@ def garch_normal_var(portfolio, window, confidence_level):
         # Fit the model
         fitted_model = model.fit(disp="off", update_freq=0, show_warning=False)
 
+        if fitted_model.convergence_flag != 0:
+            convergence_issues.append(
+                {
+                    "date": str(portfolio.index[i]),
+                    "status": int(fitted_model.convergence_flag),
+                    "message": str(fitted_model.optimization_result.message),
+                }
+            )
+
         # Forecast one-day-ahead conditional mean and variance
         forecast = fitted_model.forecast(horizon=1, reindex=False)
 
@@ -43,13 +56,23 @@ def garch_normal_var(portfolio, window, confidence_level):
         var_threshold.iloc[i] = (mu_forecast + sigma_forecast * q) / 100
 
     # Return results in the standard VaR output format
-    return make_var_output(
+    result = make_var_output(
         portfolio=portfolio,
         var_threshold=var_threshold,
         model_name="GARCH(1,1)-Normal VaR",
         confidence_level=confidence_level,
         window=window,
     )
+    result.attrs["convergence_issues"] = convergence_issues
+    if convergence_issues:
+        warnings.warn(
+            f"{len(convergence_issues)} GARCH fits did not converge at "
+            f"{confidence_level:.0%}. Forecasts retained for dissertation parity; "
+            "inspect convergence diagnostics before interpreting results.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+    return result
 
 
 def garch_t_var(portfolio, window, confidence_level):
@@ -59,6 +82,8 @@ def garch_t_var(portfolio, window, confidence_level):
 
     # Prepare empty Series for VaR threshold
     var_threshold = pd.Series(index=portfolio.index, dtype=float)
+
+    convergence_issues = []
 
     # Rolling GARCH estimation
     for i in range(window, len(portfolio)):
@@ -73,6 +98,15 @@ def garch_t_var(portfolio, window, confidence_level):
 
         # Fit the model
         fitted_model = model.fit(disp="off", update_freq=0, show_warning=False)
+
+        if fitted_model.convergence_flag != 0:
+            convergence_issues.append(
+                {
+                    "date": str(portfolio.index[i]),
+                    "status": int(fitted_model.convergence_flag),
+                    "message": str(fitted_model.optimization_result.message),
+                }
+            )
 
         # Forecast one-day-ahead conditional mean and variance
         forecast = fitted_model.forecast(horizon=1, reindex=False)
@@ -92,10 +126,20 @@ def garch_t_var(portfolio, window, confidence_level):
         var_threshold.iloc[i] = (mu_forecast + sigma_forecast * q) / 100
 
     # Return results in the standard VaR output format
-    return make_var_output(
+    result = make_var_output(
         portfolio=portfolio,
         var_threshold=var_threshold,
         model_name="GARCH(1,1)-Student-t VaR",
         confidence_level=confidence_level,
         window=window,
     )
+    result.attrs["convergence_issues"] = convergence_issues
+    if convergence_issues:
+        warnings.warn(
+            f"{len(convergence_issues)} GARCH fits did not converge at "
+            f"{confidence_level:.0%}. Forecasts retained for dissertation parity; "
+            "inspect convergence diagnostics before interpreting results.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+    return result

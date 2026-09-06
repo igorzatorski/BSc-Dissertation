@@ -50,7 +50,7 @@ The expected breach rates are 5% and 1%. All ten model/confidence combinations w
 
 These figures come from 5,029 backtesting observations and match the submitted dissertation. Complete numeric and formatted tables are available in [`results/`](results/).
 
-The rolling exceedance charts begin after the first 252-day warm-up window; the initial missing values are expected because no complete rolling window exists before that date.
+The rolling exceedance charts begin after 252 forecast observations have accumulated; the initial missing values are expected because no complete rolling window exists before that date. Runs with fewer than 253 forecasts skip these charts with a warning, as at least two complete windows are needed to draw a line. This diagnostic window remains 252 days even when the model calibration window is changed.
 
 ## Project structure
 
@@ -67,7 +67,7 @@ The rolling exceedance charts begin after the first 252-day warm-up window; the 
 │   └── pipeline.py              # End-to-end workflow
 ├── tests/                       # Regression and independent known-value tests
 ├── results/                     # Reference backtesting tables
-├── figures/                     # Figures from the submitted study
+├── figures/                     # Figures from the validated full run
 └── docs/                        # Methodology, setup guide and dissertation
 ```
 
@@ -111,12 +111,14 @@ Each completed run contains the aligned input prices, portfolio returns, daily V
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-The 18-test suite compares all models and backtests against the original notebook on identical data. Separate known-value tests check Historical VaR, closed-form Normal VaR and the Kupiec likelihood-ratio statistic independently. GitHub Actions runs the tests and code-quality checks after every push and pull request.
+The test suite compares all models and backtests against the original notebook on identical data. Separate known-value tests check Historical VaR, closed-form Normal VaR and the Kupiec likelihood-ratio statistic independently. GitHub Actions runs the tests and code-quality checks after every push and pull request.
 
 The full 2005–2025 pipeline was also run locally. It reproduced all breach counts and test decisions reported in the dissertation. See [validation details](docs/validation.md).
 
 ## Limitations
 
-This is an academic research implementation rather than a production risk engine. It studies one portfolio, one calibration window and symmetric GARCH(1,1) specifications. The original GARCH fitting behaviour is retained for numerical consistency and suppresses optimiser warnings. VaR also provides no information about the magnitude of losses beyond the threshold; Expected Shortfall is a natural extension.
+This is an academic research implementation rather than a production risk engine. It studies one portfolio, one calibration window and symmetric GARCH(1,1) specifications. GARCH forecasts retain the original fitting behaviour for numerical consistency. Non-converged fits trigger a warning and are recorded by date in `convergence_diagnostics.csv`; the manifest records their count. Their forecasts are retained, so affected runs require review before interpretation. VaR also provides no information about the magnitude of losses beyond the threshold; Expected Shortfall is a natural extension.
 
 The source code is available under the [MIT License](LICENSE). The dissertation PDF and original research figures remain © 2026 Igor Zatorski and are not covered by the software licence. Market data is downloaded directly from Yahoo Finance and is not distributed in this repository.
+
+The MIT licence grants rights to the project code, not to Yahoo Finance data, third-party libraries or university/company branding. Data access and reuse remain subject to the providers' terms; [yfinance](https://github.com/ranaroussi/yfinance) notes that Yahoo Finance access is intended for personal use. This repository is an academic research project and is not endorsed by Yahoo Finance or S&P Global.
